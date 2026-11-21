@@ -1,0 +1,28 @@
+name: Build R3Zi MODS
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r25c
+          
+      - name: Compile
+        run: |
+          $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang++ \
+            -shared -fPIC \
+            -o libR3ZiMods.so \
+            src/main.cpp \
+            -llog
+            
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: libR3ZiMods
+          path: libR3ZiMods.so
